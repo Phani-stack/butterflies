@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cinematic Surprise</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --gold: #d4af37;
+            --gold-bright: #fcf6ba;
+            --box: #1a1a1a;
+            --text-muted: #888;
+            --heart: #ff3e3e;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease;
+        }
+
+        .loader-ring {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #333;
+            border-top: 2px solid var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- GIFT SCENE --- */
+        #gift-scene {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            perspective: 1500px;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+        }
+
+        .gift-box {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            transform-style: preserve-3d;
+            transform: rotateX(-20deg) rotateY(25deg);
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .gift-box:hover {
+            transform: rotateX(-10deg) rotateY(40deg) scale(1.05);
+        }
+
+        .side {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            background: var(--box);
+            border: 1px solid #333;
+            transform-origin: bottom;
+            transition: transform 1.2s cubic-bezier(0.7, 0, 0.3, 1), opacity 1s;
+        }
+
+        .side::before {
+            content: '';
+            position: absolute;
+            width: 45px; height: 100%;
+            left: 50%; transform: translateX(-50%);
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #aa771c);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .front  { transform: translateZ(110px); }
+        .back   { transform: rotateY(180deg) translateZ(110px); }
+        .left   { transform: rotateY(-90deg) translateZ(110px); }
+        .right  { transform: rotateY(90deg) translateZ(110px); }
+        .bottom { transform: rotateX(-90deg) translateZ(110px); background: #000; }
+
+        .lid {
+            position: absolute;
+            width: 230px;
+            height: 230px;
+            background: #222;
+            top: -5px; left: -5px;
+            transform: rotateX(90deg) translateZ(115px);
+            z-index: 10;
+            transition: transform 1s cubic-bezier(0.5, -0.5, 0.1, 1.5), opacity 0.5s;
+        }
+
+        .lid::before { content: ''; position: absolute; width: 45px; height: 100%; left: 50%; transform: translateX(-50%); background: var(--gold); }
+        .lid::after { content: ''; position: absolute; height: 45px; width: 100%; top: 50%; transform: translateY(-50%); background: var(--gold); }
+
+        .is-open .lid { transform: translateY(-600px) rotateZ(30deg); opacity: 0; }
+        .is-open .front { transform: translateZ(110px) rotateX(-90deg); }
+        .is-open .back { transform: rotateY(180deg) translateZ(110px) rotateX(-90deg); }
+        .is-open .left { transform: rotateY(-90deg) translateZ(110px) rotateX(-90deg); }
+        .is-open .right { transform: rotateY(90deg) translateZ(110px) rotateX(-90deg); }
+
+        /* --- CONTENT --- */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Heartbeat Animation for Beats Section */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.1); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.15); }
+            70% { transform: scale(1); }
+        }
+
+        .heart-container {
+            font-size: 4rem;
+            color: var(--heart);
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: heartbeat 1.2s infinite ease-in-out;
+            text-shadow: 0 0 30px rgba(255, 62, 62, 0.6);
+        }
+
+        .serif { font-family: 'Playfair Display', serif; }
+        .gold-glow { color: var(--gold); text-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+
+        .counter { font-size: clamp(4rem, 12vw, 8rem); font-weight: 200; line-height: 1; }
+        .label { font-size: 0.8rem; letter-spacing: 6px; text-transform: uppercase; color: var(--text-muted); margin-top: 15px; }
+
+        /* Innovative Line decoration */
+        .line-glow {
+            width: 0%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 20px 0;
+            transition: width 1.5s ease;
+        }
+        .active .line-glow { width: 100%; }
+
+        .photo-wrap {
+            position: relative;
+            background: #fff;
+            padding: 15px 15px 80px 15px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+            transform: rotate(-2deg);
+            max-width: 450px;
+            width: 100%;
+        }
+
+        .photo-wrap img { width: 100%; display: block; }
+        .photo-wrap::after {
+            content: 'Today is yours.';
+            position: absolute;
+            bottom: 25px; left: 50%;
+            transform: translateX(-50%);
+            color: #222; font-family: 'Playfair Display', serif; font-size: 1.8rem;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: 10vh;
+            font-size: 0.7rem;
+            letter-spacing: 5px;
+            color: var(--gold);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="preloader"><div class="loader-ring"></div></div>
+
+    <div id="gift-scene">
+        <div class="gift-box" onclick="initReveal(this)">
+            <div class="lid"></div>
+            <div class="side front"></div>
+            <div class="side back"></div>
+            <div class="side left"></div>
+            <div class="side right"></div>
+            <div class="side bottom"></div>
+        </div>
+        <div class="instruction">TAP TO UNVEIL THE MAGIC</div>
+    </div>
+
+    <main id="main-content">
+        <section>
+            <h1 class="serif gold-glow reveal-item" style="font-size: clamp(2.5rem, 8vw, 5rem);">Happy Birthday Sonali</h1>
+            <div class="line-glow reveal-item"></div>
+            <p class="serif reveal-item" style="font-style: italic; color: var(--text-muted); font-size: 1.2rem;">Surya's Special Day</p>
+        </section>
+
+        <section>
+            <div class="reveal-item">
+                <div class="counter" data-val="13149">0</div>
+                <p class="label">Days of Wonder</p>
+                <div class="line-glow"></div>
+            </div>
+        </section>
+
+        <section>
+            <div class="reveal-item">
+                <div class="counter" data-val="315576">0</div>
+                <p class="label">Hours of Strength</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="reveal-item">
+                <div class="heart-container">❤</div>
+                <div class="counter" data-val="1051920000">0</div>
+                <p class="label">Rhythmic Heartbeats</p>
+                <p class="serif" style="font-size: 0.9rem; color: var(--gold); margin-top: 10px; opacity: 0.8;">Every beat a testament to your life.</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="reveal-item">
+                <div class="counter" data-val="1136073600">0</div>
+                <p class="label">Seconds of Grace</p>
+            </div>
+        </section>
+
+        <section>
+            <div class="reveal-item photo-wrap">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw5tZzE7w4FxAYqxuvE3mcYHPWsevqNOetLg&s" alt="Birthday Celebration">
+            </div>
+            <p class="serif reveal-item" style="margin-top: 50px; font-size: 1.5rem;">The story continues with you.</p>
+        </section>
+    </main>
+
+    <script>
+        // Smooth scroll handling
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.remove(), 1000);
+        });
+
+        function initReveal(box) {
+            box.parentElement.classList.add('is-open');
+
+            // High-End Confetti Config
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
+
+            // Transition to main content
+            setTimeout(() => {
+                document.getElementById('gift-scene').style.display = 'none';
+                const main = document.getElementById('main-content');
+                main.style.opacity = '1';
+                main.style.visibility = 'visible';
+                document.body.style.overflow = 'auto';
+
+                initScrollAnimations();
+            }, 1400);
+        }
+
+        function initScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        const count = entry.target.querySelector('.counter');
+                        if (count) animateNumber(count);
+                    }
+                });
+            }, { threshold: 0.3 });
+
+            document.querySelectorAll('.reveal-item').forEach(item => observer.observe(item));
+        }
+
+        function animateNumber(el) {
+            if (el.dataset.done) return;
+            el.dataset.done = true;
+
+            const target = parseInt(el.dataset.val);
+            const duration = 3000;
+            const start = performance.now();
+
+            function step(now) {
+                const progress = Math.min((now - start) / duration, 1);
+                // Ease out Expo for cinematic feel
+                const val = progress === 1 ? target : Math.floor(target * (1 - Math.pow(2, -10 * progress)));
+                el.innerText = val.toLocaleString();
+                if (progress < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>
