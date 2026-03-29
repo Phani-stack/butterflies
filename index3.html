@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dude - The Art</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap');
+
+        :root {
+            --pink: #ff4d6d;
+            --dark-red: #590d22;
+            --bg: #fff0f3;
+            --thread-color: #ffb3c1;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            touch-action: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* SVG Overlay for Threads */
+        #thread-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .thread-line {
+            stroke: var(--thread-color);
+            stroke-width: 2;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+
+        /* Final Message - CLEAN TEXT ONLY */
+        #final-message {
+            position: absolute;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease;
+            z-index: 2000;
+            pointer-events: none;
+            width: 100%;
+            background: transparent;
+            /* No box background */
+            padding: 0;
+        }
+
+        #final-message h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            color: var(--pink);
+            margin: 0;
+            /* Multi-layered shadow to create a clear "text-only" outline effect */
+            text-shadow:
+                2px 2px 0px #fff,
+                -2px -2px 0px #fff,
+                2px -2px 0px #fff,
+                -2px 2px 0px #fff,
+                0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #final-message p {
+            font-size: 1.4rem;
+            color: var(--dark-red);
+            font-weight: 600;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px white;
+        }
+
+        /* Card Styling */
+        .card {
+            position: absolute;
+            width: 200px;
+            height: 260px;
+            background: white;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: grab;
+            user-select: none;
+            z-index: 10;
+            transition: opacity 1.5s ease, transform 0.1s ease-out;
+            transform-origin: top center;
+        }
+
+        .card img {
+            width: 100%;
+            height: 80%;
+            object-fit: cover;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .card .tag {
+            height: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pink);
+            font-weight: bold;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        /* Final state: faded and hanging */
+        .vanish {
+            opacity: 0.7 !important;
+        }
+
+        .instruction {
+            position: fixed;
+            bottom: 20px;
+            color: var(--pink);
+            font-weight: bold;
+            z-index: 2000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <svg id="thread-svg"></svg>
+
+    <div id="final-message">
+        <h1>Forever & Always</h1>
+        <p>You are the thread that holds my world together Dude</p>
+    </div>
+
+    <div class="instruction" id="hint">Dude ❤️</div>
+
+    <div class="card" data-moved="false">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8CJIhjxNG0M8JQa45WVHZw99_w2Jzge5A3w&s" alt="1">
+        <div class="tag">The Spark</div>
+    </div>
+    <div class="card" data-moved="false">
+        <img src="https://cinemessenger.com/wp-content/uploads/2025/10/IMG_20251022_103550.jpg" alt="2">
+        <div class="tag">Our Bond</div>
+    </div>
+    <div class="card" data-moved="false">
+        <img src="https://images.indianexpress.com/2025/10/mamitha-baiju-dude-promotions.jpg?w=1200" alt="3">
+        <div class="tag">Golden Times</div>
+    </div>
+    <div class="card" data-moved="false">
+        <img src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202510/dude-trailer-091027426-16x9_0.jpeg?VersionId=yPd2TIgJeLRsB2eIBOBn_NNSJj75pqfz&size=690:388"
+            alt="4">
+        <div class="tag">Pure Joy</div>
+    </div>
+    <div class="card" data-moved="false">
+        <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1OBDS8.img?w=768&h=432&m=6&x=649&y=122&s=189&d=189"
+            alt="5">
+        <div class="tag">True Love</div>
+    </div>
+
+    <script>
+
+        window.onload = () => {
+            const cards = document.querySelectorAll('.card');
+            const finalMsg = document.getElementById('final-message');
+            const hint = document.getElementById('hint');
+            const svg = document.getElementById('thread-svg');
+            let movedCount = 0;
+
+
+            cards.forEach((card) => {
+                const randomX = (Math.random() - 0.5) * 80;
+                const randomY = (Math.random() - 0.5) * 80;
+                const randomRotate = (Math.random() - 0.5) * 25;
+                card.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
+                setupDraggable(card);
+            });
+
+        }
+        const cards = document.querySelectorAll('.card');
+        const finalMsg = document.getElementById('final-message');
+        const hint = document.getElementById('hint');
+        const svg = document.getElementById('thread-svg');
+        let movedCount = 0;
+
+        cards.forEach((card) => {
+            const randomX = (Math.random() - 0.5) * 60;
+            const randomY = (Math.random() - 0.5) * 60;
+            const randomRotate = (Math.random() - 0.5) * 20;
+            card.style.transform = `translate(${randomX}px, ${randomY}px) rotate(${randomRotate}deg)`;
+            setupDraggable(card);
+        });
+
+        function setupDraggable(card) {
+            let isDragging = false;
+            let startX, startY;
+            let currentX = 0;
+            let currentY = 0;
+
+            const updatePos = () => {
+                const style = window.getComputedStyle(card);
+                const matrix = new WebKitCSSMatrix(style.transform);
+                currentX = matrix.m41;
+                currentY = matrix.m42;
+            };
+
+            const onStart = (e) => {
+                if (card.classList.contains('vanish')) return;
+                updatePos();
+                isDragging = true;
+                card.style.zIndex = 1000;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                startX = clientX - currentX;
+                startY = clientY - currentY;
+                card.style.cursor = 'grabbing';
+            };
+
+            const onMove = (e) => {
+                if (!isDragging) return;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                currentX = clientX - startX;
+                currentY = clientY - startY;
+                card.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${currentX / 25}deg)`;
+            };
+
+            const onEnd = () => {
+                if (!isDragging) return;
+                isDragging = false;
+                card.style.cursor = 'grab';
+                card.style.zIndex = 10;
+
+                if ((Math.abs(currentX) > 130 || Math.abs(currentY) > 130) && card.getAttribute('data-moved') === 'false') {
+                    card.setAttribute('data-moved', 'true');
+                    movedCount++;
+                    checkCompletion();
+                }
+            };
+
+            card.addEventListener('mousedown', onStart);
+            window.addEventListener('mousemove', onMove);
+            window.addEventListener('mouseup', onEnd);
+            card.addEventListener('touchstart', onStart);
+            window.addEventListener('touchmove', onMove);
+            window.addEventListener('touchend', onEnd);
+        }
+
+        function checkCompletion() {
+            if (movedCount === cards.length) {
+                hint.style.display = 'none';
+                finalMsg.style.visibility = 'visible';
+                finalMsg.style.opacity = '1';
+
+                cards.forEach((card, index) => {
+                    card.classList.add('vanish');
+                    card.style.zIndex = "5";
+                    createThread(card, index);
+                });
+                startHearts();
+            }
+        }
+
+        function createThread(card, index) {
+            const rect = card.getBoundingClientRect();
+            const cardX = rect.left + rect.width / 2;
+            const cardY = rect.top;
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            line.setAttribute("x1", cardX);
+            line.setAttribute("y1", 0);
+            line.setAttribute("x2", cardX);
+            line.setAttribute("y2", cardY);
+            line.setAttribute("class", "thread-line");
+            svg.appendChild(line);
+
+            setTimeout(() => {
+                line.style.strokeDashoffset = "0";
+            }, 100);
+        }
+
+        function startHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.style.position = 'fixed';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.bottom = '-5vh';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
+                heart.style.zIndex = '0';
+                heart.style.transition = 'transform 4s linear, opacity 4s';
+                document.body.appendChild(heart);
+
+                setTimeout(() => {
+                    heart.style.transform = `translateY(-110vh) translateX(${(Math.random() - 0.5) * 100}px)`;
+                    heart.style.opacity = '0';
+                }, 100);
+
+                setTimeout(() => heart.remove(), 4000);
+            }, 400);
+        }
+    </script>
+</body>
+
+</html>
