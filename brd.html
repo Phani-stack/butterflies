@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The 19th Chapter</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --------------------------------- */
+        /* MAGICAL FLOATING BACKGROUND       */
+        /* --------------------------------- */
+        .bg-magic {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 30%, #1a1a1a 0%, #000 100%);
+            z-index: -2;
+        }
+
+        /* Container for background objects */
+        #objects-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Behind text, above black BG */
+            pointer-events: none;
+        }
+
+        /* Stylized Balloon */
+        .balloon {
+            position: absolute;
+            bottom: -150px;
+            width: 40px;
+            height: 55px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            animation: floatUp linear infinite;
+        }
+        .balloon::after { /* Balloon string */
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            width: 1px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Shimmering Heart */
+        .heart {
+            position: absolute;
+            bottom: -100px;
+            width: 20px;
+            height: 20px;
+            background: #ff0080;
+            transform: rotate(-45deg);
+            animation: floatUp linear infinite;
+        }
+        .heart::before, .heart::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff0080;
+            border-radius: 50%;
+        }
+        .heart::before { top: -10px; left: 0; }
+        .heart::after { left: 10px; top: 0; }
+
+        /* Floating Butterfly (Simple Representation) */
+        .butterfly {
+            position: absolute;
+            bottom: -100px;
+            width: 10px;
+            height: 10px;
+            background: #fff; /* Body */
+            border-radius: 50%;
+            animation: butterflyFloat linear infinite;
+        }
+        .butterfly::before, .butterfly::after {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50% 50% 0 50%;
+            top: -10px;
+        }
+        .butterfly::before { left: -16px; transform: rotate(-10deg); animation: flapLeft 0.3s infinite alternate; }
+        .butterfly::after { left: 6px; transform: rotate(10deg); animation: flapRight 0.3s infinite alternate; }
+
+        /* KEYFRAMES for Background Objects */
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.7; }
+            90% { opacity: 0.7; }
+            100% { transform: translateY(-120vh) rotate(20deg); opacity: 0; }
+        }
+
+        @keyframes butterflyFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            50% { transform: translateY(-60vh) translateX(30px); }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-120vh) translateX(-30px); opacity: 0; }
+        }
+
+        @keyframes flapLeft { to { transform: rotate(-50deg); } }
+        @keyframes flapRight { to { transform: rotate(50deg); } }
+
+        /* --------------------------------- */
+        /* MAIN CONTENT STYLE (AS REQUESTED) */
+        /* --------------------------------- */
+        .container {
+            width: 90%;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .top-label {
+            font-size: 0.75rem;
+            letter-spacing: 6px;
+            color: #ff0080;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            animation-delay: 0.2s;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 12vw, 4rem);
+            font-weight: 900;
+            line-height: 0.9;
+            margin-bottom: 5px;
+            animation-delay: 0.4s;
+            letter-spacing: -1px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .name-style {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(4.5rem, 18vw, 6rem);
+            background: linear-gradient(to bottom, #fff 40%, #ff0080 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            animation-delay: 0.6s;
+            filter: drop-shadow(0 0 15px rgba(255, 0, 128, 0.5));
+        }
+
+        .quote-text {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 15px;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: 1px;
+            animation-delay: 0.8s;
+        }
+
+        .btn-celebrate {
+            margin-top: 40px;
+            padding: 22px 50px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 100px;
+            box-shadow: 0 15px 45px rgba(255, 0, 128, 0.6);
+            animation: pulse 2s infinite, fadeInUp 0.8s forwards;
+            animation-delay: 1s;
+            cursor: pointer;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Secret Message Overlay */
+        #secret-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .secret-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 50px 30px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transform: scale(0.8) translateY(40px);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            max-width: 400px;
+        }
+
+        .secret-card h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            color: #ff0080;
+        }
+
+        .secret-card p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #eee;
+            font-weight: 300;
+        }
+
+        .hint {
+            margin-top: 40px;
+            font-size: 0.7rem;
+            color: #666;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-magic"></div>
+    <div id="objects-container"></div>
+
+    <div class="container">
+        <p class="top-label reveal-item">29 • 03 • 2007</p>
+        <h1 class="reveal-item">HAPPY<br>BIRTHDAY</h1>
+        <span class="name-style reveal-item">Kavya Kadali</span>
+        <p class="quote-text reveal-item">"Nineteen years of being absolutely amazing."</p>
+        <button class="btn-celebrate" onclick="triggerMagic(event)">Note</button>
+    </div>
+
+    <div id="secret-overlay" onclick="closeSecret()">
+        <div class="secret-card" id="card">
+            <h2>Dear Kavya,</h2>
+            <p>
+                "Wishing you a day that’s as wonderful and unique as you are. Cheers to your next big chapter and everything beautiful it has in store for you!"
+            </p>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // 1. GENERATE BACKGROUND OBJECTS
+        const container = document.getElementById('objects-container');
+        const objectTypes = ['balloon', 'heart', 'butterfly'];
+        const colors = ['#ff0080', '#7928ca', '#ffffff', '#FFD700'];
+
+        function createObject() {
+            const type = objectTypes[Math.floor(Math.random() * objectTypes.length)];
+            const obj = document.createElement('div');
+            obj.className = type;
+
+            // Random properties
+            obj.style.left = Math.random() * 100 + 'vw';
+            const sizeMultiplier = Math.random() * 0.5 + 0.75; // 75% to 125% size
+            obj.style.transform = `scale(${sizeMultiplier})`;
+
+            // Random color for balloons and hearts
+            if (type !== 'butterfly') {
+                obj.style.background = colors[Math.floor(Math.random() * colors.length)];
+                if (type === 'heart') {
+                    // Hearts need special handling for pseudo-elements
+                    obj.style.setProperty('--heart-color', obj.style.background);
+                }
+            } else {
+                // Butterflies are white/shimmer, but random width flap
+                obj.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            }
+
+            // Random animation duration
+            const duration = Math.random() * 5 + 10; // 10 to 15 seconds
+            obj.style.animationDuration = duration + 's';
+
+            container.appendChild(obj);
+
+            // Remove object after animation ends
+            setTimeout(() => { obj.remove(); }, duration * 1000);
+        }
+
+        // Initialize and keep creating objects
+        for(let i=0; i<15; i++) { setTimeout(createObject, i * 300); }
+        setInterval(createObject, 700);
+
+
+        // 2. TRIGGER CELEBRATION
+        function triggerMagic(e) {
+            e.stopPropagation();
+
+            const count = 300; // Increased confetti
+            const defaults = { origin: { y: 0.7 }, colors: ['#ff0080', '#ffffff', '#7928ca', '#FFD700'] };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+
+            // Extra large gold burst
+            setTimeout(() => {
+                confetti({ particleCount: 50, velocity: 30, spread: 360, origin: { x: 0.5, y: 0.5 }, colors: ['#FFD700'] });
+            }, 300);
+
+            setTimeout(() => {
+                const overlay = document.getElementById('secret-overlay');
+                const card = document.getElementById('card');
+                overlay.style.display = 'flex';
+                setTimeout(() => {
+                    overlay.style.opacity = '1';
+                    card.style.transform = 'scale(1) translateY(0)';
+                }, 50);
+            }, 1000);
+        }
+
+        function closeSecret() {
+            const overlay = document.getElementById('secret-overlay');
+            const card = document.getElementById('card');
+            overlay.style.opacity = '0';
+            card.style.transform = 'scale(0.8) translateY(40px)';
+            setTimeout(() => { overlay.style.display = 'none'; }, 500);
+        }
+    </script>
+</body>
+</html>

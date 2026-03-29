@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dude - The Art</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;600&display=swap');
+
+        :root {
+            --pink: #ff4d6d;
+            --dark-red: #590d22;
+            --bg: #fff0f3;
+            --thread-color: #ffb3c1;
+            --box-color: #ff4d6d;
+            --ribbon-color: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg);
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* LOVE BACKGROUND */
+
+        #love-background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .love {
+            position: absolute;
+            bottom: -40px;
+            font-size: 22px;
+            color: #ff4d6d;
+            opacity: .8;
+            animation: floatLove linear forwards;
+        }
+
+        @keyframes floatLove {
+            from {
+                transform: translateY(0) scale(.8);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-110vh) scale(1.4);
+                opacity: 0;
+            }
+        }
+
+        /* GIFT BOX */
+
+        #gift-container {
+            position: absolute;
+            z-index: 5000;
+            cursor: pointer;
+            transition: .8s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gift-box-top {
+            width: 320px;
+            height: 320px;
+            background: var(--box-color);
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, .2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .ribbon-v {
+            position: absolute;
+            width: 50px;
+            height: 100%;
+            background: white;
+        }
+
+        .ribbon-h {
+            position: absolute;
+            height: 50px;
+            width: 100%;
+            background: white;
+        }
+
+        .bow-main {
+            position: absolute;
+        }
+
+        .bow-loop {
+            width: 80px;
+            height: 100px;
+            border: 18px solid white;
+            border-radius: 50% 50% 0 50%;
+            position: absolute;
+            top: -50px;
+        }
+
+        .loop-left {
+            left: -80px;
+        }
+
+        .loop-right {
+            right: -80px;
+            transform: scaleX(-1);
+        }
+
+        .bow-center {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+        }
+
+        .box-label {
+            margin-top: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: var(--dark-red);
+        }
+
+        /* MAIN */
+
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            display: contents;
+        }
+
+        .card {
+            position: absolute;
+            width: 220px;
+            height: 280px;
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, .1);
+            cursor: grab;
+            z-index: 10;
+            touch-action: none;
+            user-select: none;
+        }
+
+        .card img {
+            width: 100%;
+            height: 80%;
+            object-fit: cover;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .tag {
+            height: 20%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--pink);
+            font-weight: bold;
+        }
+
+        .vanish {
+            opacity: .6;
+        }
+
+        #final-message {
+            position: absolute;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s;
+            z-index: 2000;
+        }
+
+        #final-message h1 {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: var(--pink);
+            margin: 0;
+        }
+
+        #final-message p {
+            font-weight: 600;
+            color: var(--dark-red);
+        }
+
+        .instruction {
+            position: fixed;
+            bottom: 30px;
+            font-weight: bold;
+            color: var(--pink);
+        }
+        .card{
+position:absolute;
+left:0;
+top:0;
+}
+    </style>
+</head>
+
+<body>
+
+    <div id="love-background"></div>
+
+    <div id="gift-container" onclick="openBox()">
+        <div class="gift-box-top">
+            <div class="ribbon-v"></div>
+            <div class="ribbon-h"></div>
+
+            <div class="bow-main">
+                <div class="bow-loop loop-left"></div>
+                <div class="bow-loop loop-right"></div>
+                <div class="bow-center"></div>
+            </div>
+        </div>
+
+        <div class="box-label">For You Dude ❤️</div>
+    </div>
+
+    <div id="main-content">
+
+        <div id="final-message">
+            <h1>Forever & Always</h1>
+            <p>You are the thread that holds my world together Dude</p>
+        </div>
+
+        <div class="instruction" id="hint">Drag the memories away...</div>
+
+        <div class="card" data-moved="false">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8CJIhjxNG0M8JQa45WVHZw99_w2Jzge5A3w&s">
+            <div class="tag">The Spark</div>
+        </div>
+
+        <div class="card" data-moved="false">
+            <img src="https://cinemessenger.com/wp-content/uploads/2025/10/IMG_20251022_103550.jpg">
+            <div class="tag">Our Bond</div>
+        </div>
+
+        <div class="card" data-moved="false">
+            <img src="https://images.indianexpress.com/2025/10/mamitha-baiju-dude-promotions.jpg?w=1200">
+            <div class="tag">Golden Times</div>
+        </div>
+
+        <div class="card" data-moved="false">
+            <img
+                src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202510/dude-trailer-091027426-16x9_0.jpeg">
+            <div class="tag">Pure Joy</div>
+        </div>
+
+        <div class="card" data-moved="false">
+            <img src="https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1OBDS8.img">
+            <div class="tag">True Love</div>
+        </div>
+
+    </div>
+
+    <script>
+
+        let movedCount = 0;
+        const cards = document.querySelectorAll(".card");
+        const giftContainer = document.getElementById("gift-container");
+        const mainContent = document.getElementById("main-content");
+
+        /* OPEN BOX */
+
+        function openBox() {
+
+            giftContainer.style.transform = "scale(1.2) translateY(-100vh)";
+            giftContainer.style.opacity = "0";
+
+            setTimeout(() => {
+                giftContainer.style.display = "none";
+                mainContent.style.visibility = "visible";
+                mainContent.style.opacity = "1";
+                initialize();
+            }, 600);
+
+        }
+
+        /* INITIAL CARD POSITIONS */
+
+        function initialize() {
+
+    const cardWidth = 220;
+    const cardHeight = 280;
+
+    cards.forEach(card => {
+
+        const maxX = window.innerWidth - cardWidth - 20;
+        const maxY = window.innerHeight - cardHeight - 120;
+
+        const x = Math.random() * maxX;
+        const y = Math.random() * maxY;
+
+        const r = (Math.random() - 0.5) * 25;
+
+        /* reset transforms so cards don't stack */
+        card.style.transform = "none";
+
+        card.style.left = x + "px";
+        card.style.top = y + "px";
+
+        card.style.transform = `rotate(${r}deg)`;
+
+        setupDrag(card);
+
+    });
+
+}
+
+        /* DRAG SYSTEM */
+
+        function setupDrag(card) {
+
+            let dragging = false;
+            let offsetX = 0;
+            let offsetY = 0;
+
+            const start = (e) => {
+
+                if (card.classList.contains("vanish")) return;
+
+                dragging = true;
+
+                const point = e.touches ? e.touches[0] : e;
+                const rect = card.getBoundingClientRect();
+
+                offsetX = point.clientX - rect.left;
+                offsetY = point.clientY - rect.top;
+
+                card.style.zIndex = 1000;
+            };
+
+            const move = (e) => {
+
+                if (!dragging) return;
+
+                const point = e.touches ? e.touches[0] : e;
+
+                card.style.left = (point.clientX - offsetX) + "px";
+                card.style.top = (point.clientY - offsetY) + "px";
+
+            };
+
+            const end = () => {
+
+                if (!dragging) return;
+
+                dragging = false;
+                card.style.zIndex = 10;
+
+                const rect = card.getBoundingClientRect();
+
+                if ((Math.abs(rect.left - window.innerWidth / 2) > 150 ||
+                    Math.abs(rect.top - window.innerHeight / 2) > 150)
+                    && card.dataset.moved === "false") {
+
+                    card.dataset.moved = "true";
+                    card.classList.add("vanish");
+
+                    movedCount++;
+
+                    if (movedCount === cards.length) finish();
+
+                }
+
+            };
+
+            card.addEventListener("mousedown", start);
+            window.addEventListener("mousemove", move);
+            window.addEventListener("mouseup", end);
+
+            card.addEventListener("touchstart", start);
+            window.addEventListener("touchmove", move);
+            window.addEventListener("touchend", end);
+
+        }
+
+        /* FINAL MESSAGE */
+
+        function finish() {
+
+            document.getElementById("hint").style.display = "none";
+
+            const msg = document.getElementById("final-message");
+            msg.style.visibility = "visible";
+            msg.style.opacity = "1";
+
+        }
+
+        /* HEART BACKGROUND */
+
+        function spawnLove() {
+
+            const bg = document.getElementById("love-background");
+
+            const el = document.createElement("div");
+            el.className = "love";
+
+            const symbols = ["❤", "♥", "💕", "💖", "💘", "💗"];
+            el.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+
+            el.style.left = Math.random() * 100 + "vw";
+            el.style.fontSize = (20 + Math.random() * 25) + "px";
+
+            const duration = 4 + Math.random() * 4;
+            el.style.animationDuration = duration + "s";
+
+            bg.appendChild(el);
+
+            setTimeout(() => el.remove(), duration * 1000);
+
+        }
+
+        setInterval(spawnLove, 250);
+
+    </script>
+
+</body>
+
+</html>
